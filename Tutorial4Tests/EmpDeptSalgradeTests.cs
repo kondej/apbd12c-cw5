@@ -10,8 +10,8 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         List<Emp> result = (from emp in emps
-                            where emp.Job == "SALESMAN"
-                            select emp).ToList(); 
+            where emp.Job == "SALESMAN"
+            select emp).ToList();
 
         Assert.Equal(2, result.Count);
         Assert.All(result, e => Assert.Equal("SALESMAN", e.Job));
@@ -25,9 +25,9 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         List<Emp> result = (from emp in emps
-                            orderby emp.Sal descending
-                            where emp.DeptNo == 30
-                            select emp).ToList(); 
+            orderby emp.Sal descending
+            where emp.DeptNo == 30
+            select emp).ToList();
 
         Assert.Equal(2, result.Count);
         Assert.True(result[0].Sal >= result[1].Sal);
@@ -42,10 +42,10 @@ public class EmpDeptSalgradeTests
         var depts = Database.GetDepts();
 
         List<Emp> result = (from emp in emps
-                            where (from dept in depts
-                                   where dept.Loc == "CHICAGO"
-                                   select dept.DeptNo).Contains(emp.DeptNo)
-                            select emp).ToList(); 
+            where (from dept in depts
+                where dept.Loc == "CHICAGO"
+                select dept.DeptNo).Contains(emp.DeptNo)
+            select emp).ToList();
 
         Assert.All(result, e => Assert.Equal(30, e.DeptNo));
     }
@@ -58,12 +58,12 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = from emp in emps
-                                            select new { emp.EName, emp.Sal }; 
-        
+            select new { emp.EName, emp.Sal };
+
         Assert.All(result, r =>
         {
             Assert.False(string.IsNullOrWhiteSpace(r.EName));
-             Assert.True(r.Sal > 0);
+            Assert.True(r.Sal > 0);
         });
     }
 
@@ -76,10 +76,10 @@ public class EmpDeptSalgradeTests
         var depts = Database.GetDepts();
 
         var result = emps.Join(
-                                                    depts, 
-                                                    e => e.DeptNo, 
-                                                    d => d.DeptNo, 
-                                                    (e, d) => new { EName = e.EName, DName = d.DName }); 
+            depts,
+            e => e.DeptNo,
+            d => d.DeptNo,
+            (e, d) => new { EName = e.EName, DName = d.DName });
 
         Assert.Contains(result, r => r.DName == "SALES" && r.EName == "ALLEN");
     }
@@ -92,8 +92,8 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = emps.GroupBy(e => e.DeptNo)
-                                                   .Select(g => new { DeptNo = g.Key, Count = g.Count() }); 
-        
+            .Select(g => new { DeptNo = g.Key, Count = g.Count() });
+
         Assert.Contains(result, g => g.DeptNo == 30 && g.Count == 2);
     }
 
@@ -105,9 +105,9 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = from emp in emps
-                                               where emp.Comm != null
-                                               select new { emp.EName, emp.Comm }; 
-        
+            where emp.Comm != null
+            select new { emp.EName, emp.Comm };
+
         Assert.All(result, r => Assert.NotNull(r.Comm));
     }
 
@@ -120,10 +120,10 @@ public class EmpDeptSalgradeTests
         var grades = Database.GetSalgrades();
 
         var result = from emp in emps
-                                               from grade in grades
-                                               where emp.Sal >= grade.Losal && emp.Sal <= grade.Hisal
-                                               select new { EName = emp.EName, Grade = grade.Grade };
-        
+            from grade in grades
+            where emp.Sal >= grade.Losal && emp.Sal <= grade.Hisal
+            select new { EName = emp.EName, Grade = grade.Grade };
+
         Assert.Contains(result, r => r.EName == "ALLEN" && r.Grade == 3);
     }
 
@@ -135,9 +135,9 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = emps.GroupBy(e => e.DeptNo)
-                                                     .Select(g => 
-                                                       new { DeptNo = g.Key, AvgSal = g.Average(e => e.Sal) }); 
-        
+            .Select(g =>
+                new { DeptNo = g.Key, AvgSal = g.Average(e => e.Sal) });
+
         Assert.Contains(result, r => r.DeptNo == 30 && r.AvgSal > 1000);
     }
 
@@ -149,11 +149,11 @@ public class EmpDeptSalgradeTests
         var emps = Database.GetEmps();
 
         var result = from e in emps
-                                       where e.Sal > (from emp in emps
-                                                    where emp.DeptNo == e.DeptNo
-                                                    select emp.Sal).Average()
-                                       select e.EName; 
-        
+            where e.Sal > (from emp in emps
+                where emp.DeptNo == e.DeptNo
+                select emp.Sal).Average()
+            select e.EName;
+
         Assert.Contains("ALLEN", result);
     }
 }
